@@ -1152,20 +1152,28 @@ def select_target_path() -> None:
 def select_output_path(start: Callable[[], None]) -> None:
     global RECENT_DIRECTORY_OUTPUT, img_ft, vid_ft
 
+    name, ext = os.path.splitext( os.path.basename(modules.globals.target_path) )
+    # we dont want to accidentally overwrite our TARGET, prepend prefix
+    name = "result_" + name
+    defext_img = os.environ.get("DEEPLIVECAM_DEFEXT_IMG", "png")
+    defext_vid = os.environ.get("DEEPLIVECAM_DEFEXT_VID", "mp4")
+    if RECENT_DIRECTORY_OUTPUT is None:
+        RECENT_DIRECTORY_OUTPUT = os.environ.get("DEEPLIVECAM_DEFOUTPATH")
+
     if is_image(modules.globals.target_path):
         output_path = ctk.filedialog.asksaveasfilename(
             title="save image output file",
             filetypes=[img_ft],
-            defaultextension=".png",
-            initialfile="output.png",
+            defaultextension="." + defext_img,
+            initialfile=name + "." + defext_img,
             initialdir=RECENT_DIRECTORY_OUTPUT,
         )
     elif is_video(modules.globals.target_path):
         output_path = ctk.filedialog.asksaveasfilename(
             title="save video output file",
             filetypes=[vid_ft],
-            defaultextension=".mp4",
-            initialfile="output.mp4",
+            defaultextension="." + defext_vid,
+            initialfile=name + "." + defext_vid,
             initialdir=RECENT_DIRECTORY_OUTPUT,
         )
     else:
